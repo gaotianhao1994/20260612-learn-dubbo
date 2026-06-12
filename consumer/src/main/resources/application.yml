@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: dubbo-consumer
+
+dubbo:
+  application:
+    name: dubbo-consumer
+  registry:
+    address: zookeeper://zookeeper:2181

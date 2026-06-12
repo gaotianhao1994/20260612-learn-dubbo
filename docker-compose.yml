@@ -1,0 +1,25 @@
+services:
+  zookeeper:
+    image: zookeeper:3.8
+    ports:
+      - "2181:2181"
+
+  provider:
+    build:
+      context: .
+      dockerfile: provider/Dockerfile
+    depends_on:
+      zookeeper:
+        condition: service_started
+    environment:
+      - JAVA_OPTS=-Xms128m -Xmx256m
+
+  consumer:
+    build:
+      context: .
+      dockerfile: consumer/Dockerfile
+    depends_on:
+      provider:
+        condition: service_started
+    environment:
+      - JAVA_OPTS=-Xms128m -Xmx256m
