@@ -20,7 +20,8 @@ COPY . .
 # - -B: 批处理模式，减少日志输出
 # - -pl consumer: 只构建 consumer 模块（假设是多模块项目）
 # - -am: 同时构建 consumer 模块依赖的其他模块（also-make）
-RUN mvn package -DskipTests -B -pl consumer -am
+# --mount=type=cache: 将 Maven 本地仓库挂载为持久化缓存，避免每次构建都重新下载依赖
+RUN --mount=type=cache,target=/root/.m2 mvn package -DskipTests -B -pl consumer -am
 
 # ============================================
 # 第二阶段：运行阶段（Runtime Stage）

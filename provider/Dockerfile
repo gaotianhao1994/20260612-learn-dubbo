@@ -20,7 +20,8 @@ COPY . .
 # - -B: 批处理模式（非交互式，适合自动化构建）
 # - -pl provider: 只构建 provider 模块（pl = projects list）
 # - -am: 同时构建 provider 依赖的其他模块（am = also-make）
-RUN mvn package -DskipTests -B -pl provider -am
+# --mount=type=cache: 将 Maven 本地仓库挂载为持久化缓存，避免每次构建都重新下载依赖
+RUN --mount=type=cache,target=/root/.m2 mvn package -DskipTests -B -pl provider -am
 
 # ============================================
 # 第二阶段：运行阶段（Runtime Stage）
