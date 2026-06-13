@@ -1,6 +1,19 @@
 spring:
   application:
     name: dubbo-provider   # ← 我叫什么名字
+  # 日志输出到容器内的固定路径，配合 docker-compose 挂载到宿主机
+  output:
+    ansi:
+      enabled: never    # 禁用 ANSI 颜色码，日志文件更干净
+
+# 日志配置：写入文件 + 控制台同时输出
+logging:
+  file:
+    name: /var/log/app/provider.log   # 容器内日志路径（被挂载到宿主机）
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  level:
+    root: INFO
 
 dubbo:
   application:

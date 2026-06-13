@@ -41,6 +41,11 @@ services:
     environment:
       - JAVA_OPTS=-Xms128m -Xmx256m
 
+    # 日志挂载：容器内 /var/log/app 映射到宿主机 logs/provider 目录
+    # 容器启动后，日志会自动同步到宿主机，可直接查看
+    volumes:
+      - ./logs/provider:/var/log/app
+
   # ==================== 服务消费者（Consumer）====================
   # Consumer 是调用服务的一方
   # 比如用户界面、API 网关等，需要调用 provider 提供的接口
@@ -62,3 +67,7 @@ services:
     # 同样设置 JVM 内存参数
     environment:
       - JAVA_OPTS=-Xms128m -Xmx256m
+
+    # 日志挂载：容器内 /var/log/app 映射到宿主机 logs/consumer 目录
+    volumes:
+      - ./logs/consumer:/var/log/app
