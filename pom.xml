@@ -12,6 +12,7 @@
         <module>api</module>
         <module>provider</module>
         <module>consumer</module>
+        <module>hot-deploy-demo</module>
     </modules>
 
     <properties>
