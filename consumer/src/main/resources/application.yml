@@ -4,6 +4,8 @@ spring:
 
 dubbo:
   application:
-    name: dubbo-consumer
+    name: dubbo-consumer   # ← 我叫什么名字
   registry:
-    address: zookeeper://zookeeper:2181
+    address: zookeeper://zookeeper:2181   # ← 去哪个注册中心找服务？
+  
+   # 注意：Consumer 没有 protocol 配置！

@@ -1,12 +1,12 @@
 spring:
   application:
-    name: dubbo-provider
+    name: dubbo-provider   # ← 我叫什么名字
 
 dubbo:
   application:
     name: dubbo-provider
   protocol:
-    name: dubbo
-    port: -1   # -1 表示自动分配端口（20880起）
+    name: dubbo   # ← 用什么协议通信？（就是之前说的 TCP 层协议）
+    port: -1   # ← 端口 -1 = 自动分配（从 20880 起）
   registry:
-    address: zookeeper://zookeeper:2181
+    address: zookeeper://zookeeper:2181   # ← 注册中心在哪？
