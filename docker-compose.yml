@@ -1,25 +1,64 @@
+# Docker Compose 配置文件
+# 这个文件定义了多个服务（容器），它们会一起运行
+# 主要用于部署 Zookeeper + 服务提供者 + 服务消费者 的架构
+
 services:
+  # ==================== Zookeeper 服务 ====================
+  # Zookeeper 是一个分布式协调服务，常用于服务注册与发现
+  # 在这里，provider 和 consumer 都依赖它来找到彼此
   zookeeper:
+    # 使用官方 Zookeeper 镜像，版本 3.8
     image: zookeeper:3.8
+    
+    # 端口映射：将容器的 2181 端口映射到宿主机的 2181 端口
+    # 2181 是 Zookeeper 的默认客户端连接端口
     ports:
       - "2181:2181"
 
+  # ==================== 服务提供者（Provider）====================
+  # Provider 是实际提供业务逻辑服务的一方
+  # 比如提供订单查询、用户注册等接口
   provider:
+    # 使用 Dockerfile 构建镜像，而不是直接使用现成镜像
     build:
+      # 构建的上下文路径，这里是当前目录（docker-compose.yml 所在目录）
+      # 构建时可以把当前目录的文件传给 Docker
       context: .
+      
+      # 指定 Dockerfile 的位置，在 provider 文件夹下
       dockerfile: provider/Dockerfile
+    
+    # 依赖关系：provider 要等 zookeeper 启动后才能启动
+    # condition: service_started 表示只要 zookeeper 开始运行就行，不等待它"健康"
     depends_on:
       zookeeper:
         condition: service_started
+    
+    # 环境变量：设置 JVM 参数
+    # -Xms128m：JVM 启动时分配的初始内存为 128MB
+    # -Xmx256m：JVM 允许使用的最大内存为 256MB
+    # 这样可以控制内存使用，防止容器占用过多资源
     environment:
       - JAVA_OPTS=-Xms128m -Xmx256m
 
+  # ==================== 服务消费者（Consumer）====================
+  # Consumer 是调用服务的一方
+  # 比如用户界面、API 网关等，需要调用 provider 提供的接口
   consumer:
+    # 同样使用 Dockerfile 构建镜像
     build:
+      # 构建上下文也是当前目录
       context: .
+      
+      # Dockerfile 在 consumer 文件夹下
       dockerfile: consumer/Dockerfile
+    
+    # 依赖关系：consumer 要等 provider 启动后才能启动
+    # 这样可以确保 provider 先注册到 zookeeper，consumer 才能找到它
     depends_on:
       provider:
         condition: service_started
+    
+    # 同样设置 JVM 内存参数
     environment:
       - JAVA_OPTS=-Xms128m -Xmx256m
